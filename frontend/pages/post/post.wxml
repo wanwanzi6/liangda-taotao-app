@@ -1,0 +1,48 @@
+<!--pages/post.wxml-->
+<view class="container">
+  <view class="image-uploader" bindtap="chooseImage">
+    <image wx:if="{{tempImageUrl}}" src="{{tempImageUrl}}" mode="aspectFill" class="preview-image"></image>
+    
+    <view wx:else class="upload-placeholder">
+      <view class="plus-icon">+</view>
+      <text>添加宝贝图片</text>
+    </view>
+    
+    <view class="uploading-mask" wx:if="{{isUploading}}">
+      <text>正在上传...</text>
+    </view>
+  </view>
+
+  <view class="form-group">
+    <input 
+      class="input-title" 
+      placeholder="商品标题（如：算法导论 九成新）" 
+      bindinput="onInputTitle" 
+    />
+    <textarea 
+      class="input-desc" 
+      placeholder="详细描述一下宝贝的来源、新旧程度、入手价格等..." 
+      bindinput="onInputDesc"
+    ></textarea>
+  </view>
+
+  <view class="cell-group">
+    <view class="cell">
+      <text>价格</text>
+      <input type="digit" placeholder="0.00" bindinput="onInputPrice" />
+    </view>
+    
+    <picker bindchange="onCategoryChange" range="{{categories}}" range-key="Name">
+      <view class="cell">
+        <text>分类</text>
+        <text class="{{selectedCategory ? '' : 'placeholder'}}">
+          {{selectedCategory ? selectedCategory.Name : '选择分类'}}
+        </text>
+      </view>
+    </picker>
+  </view>
+
+  <button class="submit-btn" bindtap="submitPost" disabled="{{isUploading}}">
+    {{isUploading ? '图片上传中...' : '立即发布'}}
+  </button>
+</view>

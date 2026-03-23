@@ -1,0 +1,5 @@
+{
+  "navigationStyle": "custom",
+  "navigationBarBackgroundColor": "#FFD900", 
+  "enablePullDownRefresh": true
+}

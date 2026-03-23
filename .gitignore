@@ -1,0 +1,9 @@
+# Go 后端忽略
+backend/*.exe
+backend/vendor/
+backend/.env
+
+# 小程序前端忽略
+frontend/node_modules/
+frontend/dist/
+frontend/project.config.json.local

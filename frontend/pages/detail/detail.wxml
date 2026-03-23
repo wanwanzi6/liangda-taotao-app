@@ -1,0 +1,38 @@
+<!--pages/detail/detail.wxml-->
+<view class="container" wx:if="{{product}}">
+  <view class="header-section">
+    <view class="price-row">
+      <text class="symbol">¥</text>
+      <text class="price-value">{{product.Price}}</text>
+      <text class="condition-tag">几乎全新</text>
+    </view>
+    
+    <view class="product-title">{{product.Title}}</view>
+    
+    <view class="product-desc">{{product.Description}}</view>
+  </view>
+
+  <view class="image-section">
+    <view class="image-placeholder">
+      <image mode="widthFix" src="/assets/images/placeholder.png" style="width:100%"></image>
+      <text>暂无实物图</text>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="bar-left">
+      <view class="action-item">
+        <icon type="info" size="20"></icon>
+        <text>留言</text>
+      </view>
+      <view class="action-item">
+        <icon type="success" size="20"></icon>
+        <text>收藏</text>
+      </view>
+    </view>
+    <view class="bar-right">
+      <button class="chat-btn">聊一聊</button>
+      <button class="buy-btn">立即购买</button>
+    </view>
+  </view>
+</view>

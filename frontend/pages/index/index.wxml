@@ -1,0 +1,62 @@
+<!--index.wxml-->
+<view class="container">
+  
+  <view class="nav-header">
+    <view class="search-box">
+      <icon type="search" size="14" color="#999"></icon>
+      <text>搜一下，量大校友都在买什么...</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-x class="category-nav">
+    <view 
+      class="nav-item {{activeCategoryId == 0 ? 'active' : ''}}"
+      bindtap="switchCategory"
+      data-id="0"
+    >全部</view>
+    
+    <view 
+      wx:for="{{categories}}" 
+      wx:key="ID" 
+      class="nav-item {{activeCategoryId == item.ID ? 'active' : ''}}"
+      bindtap="switchCategory"
+      data-id="{{item.ID}}"
+    >
+      {{item.Name}}
+    </view>
+  </scroll-view>
+
+  <view class="product-list">
+    <view 
+      class="product-card" 
+      wx:for="{{products}}" 
+      wx:key="ID" 
+      bindtap="goToDetail" 
+      data-id="{{item.ID}}"
+    >
+      <view class="product-image-wrap">
+        <image 
+          wx:if="{{item.ImageURL}}" 
+          src="{{'http://localhost:8080' + item.ImageURL}}" 
+          mode="aspectFill" 
+          class="product-img"
+        ></image>
+        <view wx:else class="product-image-placeholder">
+          <text>量大淘淘</text>
+        </view>
+      </view>
+      
+      <view class="product-info">
+        <text class="product-title">{{item.Title}}</text>
+        <view class="product-price-row">
+          <text class="price-symbol">¥</text>
+          <text class="price-value">{{item.Price}}</text>
+          <text class="status-tag" wx:if="{{item.Status == 2}}">交易中</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading-tips" wx:if="{{loading}}">正在加载校友的宝贝...</view>
+
+</view>
