@@ -35,10 +35,10 @@
       data-id="{{item.ID}}"
     >
       <view class="product-image-wrap">
-        <image 
-          wx:if="{{item.ImageURL}}" 
-          src="{{'http://localhost:8080' + item.ImageURL}}" 
-          mode="aspectFill" 
+        <image
+          wx:if="{{item.ImageURL}}"
+          src="{{'http://127.0.0.1:8080' + item.ImageURL}}"
+          mode="aspectFill"
           class="product-img"
         ></image>
         <view wx:else class="product-image-placeholder">

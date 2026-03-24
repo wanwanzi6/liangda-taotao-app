@@ -15,7 +15,7 @@ import (
 
 // initDB 负责初始化数据库连接
 func initDB() *gorm.DB {
-	dsn := config.GetDSN(config.ApppDBconfig)
+	dsn := config.GetDSN(config.AppDBConfig)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatalf("❌ 数据库连接失败: %v", err)

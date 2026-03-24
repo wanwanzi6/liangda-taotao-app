@@ -29,14 +29,14 @@ func (h *UserHandler) WeChatLogin(c *gin.Context) {
 		Code string `json:"code" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "缺少 code 参数"})
+		BadRequest(c, "缺少 code 参数")
 		return
 	}
 
 	// 1. 用 code 换取 openid
 	openID, err := h.getWeChatOpenID(req.Code)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "微信登录失败: " + err.Error()})
+		ServerError(c, "微信登录失败: "+err.Error())
 		return
 	}
 
@@ -46,32 +46,29 @@ func (h *UserHandler) WeChatLogin(c *gin.Context) {
 		// 新用户注册
 		user = &model.User{OpenID: openID}
 		if err := h.repo.Create(user); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "创建用户失败"})
+			ServerError(c, "创建用户失败")
 			return
 		}
 	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "查询用户失败"})
+		ServerError(c, "查询用户失败")
 		return
 	}
 
 	// 3. 生成 JWT token
 	token, err := middleware.GenerateToken(user.ID, user.OpenID, user.Nickname)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "生成 token 失败"})
+		ServerError(c, "生成 token 失败")
 		return
 	}
 
 	// 4. 返回 token 和用户信息
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": gin.H{
-			"token": token,
-			"user": gin.H{
-				"id":         user.ID,
-				"nickname":   user.Nickname,
-				"avatar_url": user.AvatarURL,
-				"is_verify":  user.IsVerify,
-			},
+	Success(c, gin.H{
+		"token": token,
+		"user": gin.H{
+			"id":         user.ID,
+			"nickname":   user.Nickname,
+			"avatar_url": user.AvatarURL,
+			"is_verify":  user.IsVerify,
 		},
 	})
 }
@@ -131,7 +128,7 @@ func (h *UserHandler) UpdateUserInfo(c *gin.Context) {
 	// 从上下文获取登录用户 ID
 	userID, exists := c.Get("user_id")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+		Unauthorized(c, "未登录")
 		return
 	}
 
@@ -140,13 +137,13 @@ func (h *UserHandler) UpdateUserInfo(c *gin.Context) {
 		AvatarURL string `json:"avatar_url"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "参数错误"})
+		BadRequest(c, "参数错误")
 		return
 	}
 
 	user, err := h.repo.GetByID(userID.(uint64))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "用户不存在"})
+		NotFound(c, "用户不存在")
 		return
 	}
 
@@ -158,36 +155,33 @@ func (h *UserHandler) UpdateUserInfo(c *gin.Context) {
 	}
 
 	if err := h.repo.Update(user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "更新失败"})
+		ServerError(c, "更新失败")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"code": 200, "msg": "更新成功", "data": user})
+	SuccessMsg(c, "更新成功", user)
 }
 
 // GetUserInfo 获取当前用户信息
 func (h *UserHandler) GetUserInfo(c *gin.Context) {
 	userID, exists := c.Get("user_id")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+		Unauthorized(c, "未登录")
 		return
 	}
 
 	user, err := h.repo.GetByID(userID.(uint64))
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "用户不存在"})
+		NotFound(c, "用户不存在")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": gin.H{
-			"id":         user.ID,
-			"open_id":    user.OpenID,
-			"nickname":   user.Nickname,
-			"avatar_url": user.AvatarURL,
-			"is_verify":  user.IsVerify,
-		},
+	Success(c, gin.H{
+		"id":         user.ID,
+		"open_id":    user.OpenID,
+		"nickname":   user.Nickname,
+		"avatar_url": user.AvatarURL,
+		"is_verify":  user.IsVerify,
 	})
 }
 

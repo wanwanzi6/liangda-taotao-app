@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"liangda-taotao/config"
 	"net/http"
 	"strings"
 	"time"
@@ -9,7 +10,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var JWTSecret = []byte("liangda-taotao-secret-key-2024")
+var JWTSecret = []byte(config.JWT.Secret)
 
 // Claims 自定义声明
 type Claims struct {

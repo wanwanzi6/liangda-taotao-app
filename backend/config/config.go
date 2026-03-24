@@ -1,6 +1,19 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+)
+
+// 先加载 .env 文件
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("⚠️ 未找到 .env 文件，将使用系统环境变量")
+	}
+}
 
 // DBConfig 存储数据库连接信息
 type DBConfig struct {
@@ -17,13 +30,13 @@ func GetDSN(cfg DBConfig) string {
 		cfg.User, cfg.Password, cfg.Host, cfg.Port, cfg.DBName)
 }
 
-// 先手动填入配置，后续升级为读取 .yaml 文件
-var ApppDBconfig = DBConfig{
-	User:     "root",
-	Password: "lkx411",
-	Host:     "127.0.0.1",
-	Port:     3306,
-	DBName:   "liang_da_tao_tao",
+// AppDBConfig 从环境变量读取数据库配置
+var AppDBConfig = DBConfig{
+	User:     getEnv("DB_USER", "root"),
+	Password: getEnv("DB_PASSWORD", ""),
+	Host:     getEnv("DB_HOST", "127.0.0.1"),
+	Port:     getEnvInt("DB_PORT", 3306),
+	DBName:   getEnv("DB_NAME", "liang_da_tao_tao"),
 }
 
 // WeChatConfig 微信小程序配置
@@ -33,6 +46,33 @@ type WeChatConfig struct {
 }
 
 var WeChat = WeChatConfig{
-	AppID:     "wx6015d4f584306826",
-	AppSecret: "YOUR_APP_SECRET", // TODO: 替换为实际的 AppSecret
+	AppID:     getEnv("WECHAT_APPID", ""),
+	AppSecret: getEnv("WECHAT_SECRET", ""),
+}
+
+// JWTConfig JWT 配置
+type JWTConfig struct {
+	Secret string
+}
+
+var JWT = JWTConfig{
+	Secret: getEnv("JWT_SECRET", "default-secret-key"),
+}
+
+// getEnv 获取环境变量，如果不存在返回默认值
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+// getEnvInt 获取环境变量 int 值
+func getEnvInt(key string, defaultValue int) int {
+	if value := os.Getenv(key); value != "" {
+		var intVal int
+		fmt.Sscanf(value, "%d", &intVal)
+		return intVal
+	}
+	return defaultValue
 }

@@ -2,7 +2,6 @@ package handler
 
 import (
 	"liangda-taotao/internal/repository"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,11 +17,8 @@ func NewCategoryHandler(repo *repository.CategoryRepository) *CategoryHandler {
 func (h *CategoryHandler) GetAll(c *gin.Context) {
 	categories, err := h.repo.GetAll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取分类失败"})
+		ServerError(c, "获取分类失败")
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": categories,
-	})
+	Success(c, categories)
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"liangda-taotao/internal/model"
 	"liangda-taotao/internal/repository"
-	"net/http"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -37,49 +36,48 @@ func (h *ProductHandler) GetList(c *gin.Context) {
 	}
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "获取商品列表失败"})
+		ServerError(c, "获取商品列表失败")
+		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": products,
-	})
+	Success(c, products)
 }
 
 func (h *ProductHandler) Create(c *gin.Context) {
 	var p model.Product
 	// 将前端传来的 JSON 绑定到结构体
 	if err := c.ShouldBindJSON(&p); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "参数格式错误"})
+		BadRequest(c, "参数格式错误")
 		return
 	}
 
 	// 基础校验：价格不能为负
 	if p.Price.IsNegative() {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "价格不能为负数"})
+		BadRequest(c, "价格不能为负数")
+		return
 	}
 
 	// 商品名称不能为空
 	if p.Title == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "商品名称不能为空"})
+		BadRequest(c, "商品名称不能为空")
 		return
 	}
 
 	// 从 JWT token 中获取用户 ID
 	userID, exists := c.Get("user_id")
 	if !exists {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+		Unauthorized(c, "未登录")
 		return
 	}
 	p.UserID = userID.(uint64)
 	p.Status = 1 // 初始状态为待售
 
 	if err := h.repo.Create(&p); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "发布失败"})
+		ServerError(c, "发布失败")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"code": 200, "msg": "发布成功", "data": p})
+	SuccessMsg(c, "发布成功", p)
 }
 
 func (h *ProductHandler) Delete(c *gin.Context) {
@@ -87,42 +85,39 @@ func (h *ProductHandler) Delete(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的商品ID"})
+		BadRequest(c, "无效的商品ID")
 		return
 	}
 
 	if err := h.repo.Delete(uint64(id)); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "删除失败"})
+		ServerError(c, "删除失败")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"code": 200, "msg": "商品已成功下架"})
+	SuccessMsg(c, "商品已成功下架", nil)
 }
 
 func (h *ProductHandler) GetDetail(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的商品ID格式"})
+		BadRequest(c, "无效的商品ID格式")
 		return
 	}
 
 	product, err := h.repo.GetByID(id)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "该商品不存在或已下架"})
+		NotFound(c, "该商品不存在或已下架")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": product,
-	})
+	Success(c, product)
 }
 
 func (h *ProductHandler) Upload(c *gin.Context) {
 	file, err := c.FormFile("image")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "为获取到文件"})
+		BadRequest(c, "未获取到文件")
 		return
 	}
 
@@ -130,12 +125,9 @@ func (h *ProductHandler) Upload(c *gin.Context) {
 	savePath := filepath.Join("uploads", filename)
 
 	if err := c.SaveUploadedFile(file, savePath); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "保存失败"})
+		ServerError(c, "保存失败")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"url":  "/uploads/" + filename,
-	})
+	Success(c, gin.H{"url": "/uploads/" + filename})
 }
