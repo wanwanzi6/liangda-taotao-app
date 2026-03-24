@@ -3,9 +3,12 @@
     "pages/index/index",
     "pages/logs/logs",
     "pages/post/post",
-    "pages/detail/detail"
+    "pages/detail/detail",
+    "pages/profile/profile"
   ],
   "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#667eea",
     "list": [
       {
         "pagePath": "pages/index/index",
@@ -14,12 +17,16 @@
       {
         "pagePath": "pages/post/post",
         "text": "发布"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
       }
     ]
   },
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
+    "navigationBarTitleText": "量大淘淘",
     "navigationBarBackgroundColor": "#ffffff"
   },
   "style": "v2",

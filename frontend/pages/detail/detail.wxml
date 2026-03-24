@@ -13,8 +13,8 @@
   </view>
 
   <view class="image-section">
-    <view class="image-placeholder">
-      <image mode="widthFix" src="/assets/images/placeholder.png" style="width:100%"></image>
+    <image wx:if="{{product.ImageURL}}" mode="widthFix" src="{{'http://127.0.0.1:8080' + product.ImageURL}}" style="width:100%"></image>
+    <view wx:else class="image-placeholder">
       <text>暂无实物图</text>
     </view>
   </view>

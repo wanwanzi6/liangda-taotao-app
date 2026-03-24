@@ -19,4 +19,8 @@ type Product struct {
 	Status      int             `gorm:"default:1;comment:1:待售, 2:交易中, 3:已售"`
 	UpdatedAt   time.Time       `gorm:"precision:3;index:idx_updated_at;autoUpdateTime:milli"`
 	DeletedAt   gorm.DeletedAt  `gorm:"index"`
+
+	// 关联关系
+	User     User     `gorm:"foreignKey:UserID;preload:false"`
+	Category Category `gorm:"foreignKey:CategoryID;preload:false"`
 }

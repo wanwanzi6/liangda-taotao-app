@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/shopspring/decimal"
 )
 
 type ProductHandler struct {
@@ -130,4 +131,126 @@ func (h *ProductHandler) Upload(c *gin.Context) {
 	}
 
 	Success(c, gin.H{"url": "/uploads/" + filename})
+}
+
+// GetUserProducts 获取当前用户的商品列表（我的发布）
+func (h *ProductHandler) GetUserProducts(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		Unauthorized(c, "未登录")
+		return
+	}
+
+	products, err := h.repo.GetByUserID(userID.(uint64))
+	if err != nil {
+		ServerError(c, "获取我的发布失败")
+		return
+	}
+
+	Success(c, products)
+}
+
+// Refresh 一键擦亮
+func (h *ProductHandler) Refresh(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		Unauthorized(c, "未登录")
+		return
+	}
+
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		BadRequest(c, "无效的商品ID")
+		return
+	}
+
+	// 验证商品所有权
+	product, err := h.repo.GetByID(id)
+	if err != nil {
+		NotFound(c, "商品不存在")
+		return
+	}
+	if product.UserID != userID.(uint64) {
+		BadRequest(c, "无权操作此商品")
+		return
+	}
+
+	if err := h.repo.Refresh(id); err != nil {
+		ServerError(c, "擦亮失败")
+		return
+	}
+
+	SuccessMsg(c, "擦亮成功，商品已置顶", nil)
+}
+
+// Update 更新商品信息
+func (h *ProductHandler) Update(c *gin.Context) {
+	userID, exists := c.Get("user_id")
+	if !exists {
+		Unauthorized(c, "未登录")
+		return
+	}
+
+	idStr := c.Param("id")
+	id, err := strconv.ParseUint(idStr, 10, 64)
+	if err != nil {
+		BadRequest(c, "无效的商品ID")
+		return
+	}
+
+	// 验证商品所有权
+	product, err := h.repo.GetByID(id)
+	if err != nil {
+		NotFound(c, "商品不存在")
+		return
+	}
+	if product.UserID != userID.(uint64) {
+		BadRequest(c, "无权操作此商品")
+		return
+	}
+
+	var req struct {
+		Title       string          `json:"title"`
+		Description string          `json:"description"`
+		Price       string          `json:"price"`
+		ImageURL    string          `json:"image_url"`
+		CategoryID  uint64          `json:"category_id"`
+		Type        int             `json:"type"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		BadRequest(c, "参数格式错误")
+		return
+	}
+
+	// 更新字段
+	if req.Title != "" {
+		product.Title = req.Title
+	}
+	if req.Description != "" {
+		product.Description = req.Description
+	}
+	if req.ImageURL != "" {
+		product.ImageURL = req.ImageURL
+	}
+	if req.CategoryID > 0 {
+		product.CategoryID = req.CategoryID
+	}
+	if req.Type > 0 {
+		product.Type = req.Type
+	}
+	if req.Price != "" {
+		// 使用 shopspring/decimal 解析价格
+		price, err := decimal.NewFromString(req.Price)
+		if err == nil && !price.IsNegative() {
+			product.Price = price
+		}
+	}
+
+	if err := h.repo.Update(product); err != nil {
+		ServerError(c, "更新失败")
+		return
+	}
+
+	SuccessMsg(c, "更新成功", product)
 }

@@ -26,6 +26,9 @@ func initDB() *gorm.DB {
 		log.Fatalf("❌ 数据库无响应: %v", err)
 	}
 
+	// 先清理无效的外键数据（防止迁移失败）
+	db.Exec("DELETE FROM products WHERE user_id NOT IN (SELECT id FROM users)")
+
 	// 自动迁移
 	err = db.AutoMigrate(&model.User{}, model.Product{}, model.Category{})
 	if err != nil {
@@ -85,14 +88,24 @@ func main() {
 		auth := v1.Group("")
 		auth.Use(middleware.AuthMiddleware())
 		{
+			// 刷新 Token（不需要重新走微信登录）
+			auth.POST("/refresh", userHandler.RefreshToken)
+			// 退出登录
+			auth.POST("/logout", userHandler.Logout)
 			// 获取当前用户信息
 			auth.GET("/user", userHandler.GetUserInfo)
 			// 更新用户信息
 			auth.PUT("/user", userHandler.UpdateUserInfo)
+			// 获取我的发布
+			auth.GET("/user/products", productHandler.GetUserProducts)
 			// 发布商品（需要登录）
 			auth.POST("/products", productHandler.Create)
 			// 删除商品（需要登录）
 			auth.DELETE("/products/:id", productHandler.Delete)
+			// 一键擦亮
+			auth.POST("/products/:id/refresh", productHandler.Refresh)
+			// 更新商品
+			auth.PUT("/products/:id", productHandler.Update)
 		}
 	}
 

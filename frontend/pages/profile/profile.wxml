@@ -1,0 +1,40 @@
+<!--pages/profile/profile.wxml-->
+<view class="container">
+  <!-- 用户信息头部 -->
+  <view class="user-header">
+    <view class="avatar-wrap">
+      <image class="avatar" src="{{userInfo.avatar_url || 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lxia07jQodd2SJFCYEpdX0Ck9I51eFCKg4icVनियम/0'}}" mode="aspectFill"></image>
+    </view>
+    <view class="user-info">
+      <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
+      <text class="verify-status" wx:if="{{userInfo.is_verify}}">已认证</text>
+      <text class="verify-status unverify" wx:else>未认证</text>
+    </view>
+    <view class="edit-btn" bindtap="goToEdit">编辑资料</view>
+  </view>
+
+  <!-- 我的发布列表 -->
+  <view class="section-title">我的发布</view>
+
+  <view class="product-list" wx:if="{{products.length > 0}}">
+    <view class="product-item" wx:for="{{products}}" wx:key="ID">
+      <image class="product-img" src="{{item.ImageURL ? 'http://127.0.0.1:8080' + item.ImageURL : 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lxia07jQodd2SJFCYEpdX0Ck9I51eFCKg4icVनियम/0'}}" mode="aspectFill"></image>
+      <view class="product-info">
+        <text class="product-title">{{item.Title}}</text>
+        <view class="product-meta">
+          <text class="price">¥{{item.Price}}</text>
+          <text class="status status-{{item.Status}}">{{item.Status == 1 ? '待售' : item.Status == 2 ? '交易中' : '已售'}}</text>
+        </view>
+        <view class="product-actions">
+          <view class="action-btn refresh" bindtap="refreshProduct" data-id="{{item.ID}}">擦亮</view>
+          <view class="action-btn delete" bindtap="deleteProduct" data-id="{{item.ID}}">删除</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text>还没有发布过商品</text>
+    <button class="go-post-btn" bindtap="goToPost">去发布</button>
+  </view>
+</view>

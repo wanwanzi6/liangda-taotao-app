@@ -10,9 +10,16 @@ import (
 
 // 先加载 .env 文件
 func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("⚠️ 未找到 .env 文件，将使用系统环境变量")
+	// 优先尝试当前工作目录
+	envPath := ".env"
+	if err := godotenv.Load(envPath); err != nil {
+		// 如果找不到，尝试 backend/.env
+		envPath = "backend/.env"
+		if err := godotenv.Load(envPath); err != nil {
+			log.Println("⚠️ 未找到 .env 文件，将使用系统环境变量")
+		}
 	}
+	log.Printf("📂 已加载环境变量: %s", envPath)
 }
 
 // DBConfig 存储数据库连接信息
@@ -33,7 +40,7 @@ func GetDSN(cfg DBConfig) string {
 // AppDBConfig 从环境变量读取数据库配置
 var AppDBConfig = DBConfig{
 	User:     getEnv("DB_USER", "root"),
-	Password: getEnv("DB_PASSWORD", ""),
+	Password: getEnv("DB_PASSWORD", "lkx411"),
 	Host:     getEnv("DB_HOST", "127.0.0.1"),
 	Port:     getEnvInt("DB_PORT", 3306),
 	DBName:   getEnv("DB_NAME", "liang_da_tao_tao"),
@@ -45,9 +52,12 @@ type WeChatConfig struct {
 	AppSecret string
 }
 
-var WeChat = WeChatConfig{
-	AppID:     getEnv("WECHAT_APPID", ""),
-	AppSecret: getEnv("WECHAT_SECRET", ""),
+// GetWeChat 获取微信配置
+func GetWeChat() WeChatConfig {
+	return WeChatConfig{
+		AppID:     getEnv("WECHAT_APPID", ""),
+		AppSecret: getEnv("WECHAT_SECRET", ""),
+	}
 }
 
 // JWTConfig JWT 配置
