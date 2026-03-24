@@ -41,7 +41,7 @@
           mode="aspectFill"
           class="product-img"
         ></image>
-        <image wx:else src="https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lxia07jQodd2SJFCYEpdX0Ck9I51eFCKg4icVनियम/0" mode="aspectFill" class="product-img"></image>
+        <view wx:else class="product-img-placeholder"></view>
       </view>
       
       <view class="product-info">

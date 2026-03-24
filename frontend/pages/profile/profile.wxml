@@ -3,7 +3,8 @@
   <!-- 用户信息头部 -->
   <view class="user-header">
     <view class="avatar-wrap">
-      <image class="avatar" src="{{userInfo.avatar_url || 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lxia07jQodd2SJFCYEpdX0Ck9I51eFCKg4icVनियम/0'}}" mode="aspectFill"></image>
+      <image wx:if="{{userInfo.avatar_url}}" class="avatar" src="{{userInfo.avatar_url}}" mode="aspectFill"></image>
+      <view wx:else class="avatar-placeholder">👤</view>
     </view>
     <view class="user-info">
       <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
@@ -18,7 +19,8 @@
 
   <view class="product-list" wx:if="{{products.length > 0}}">
     <view class="product-item" wx:for="{{products}}" wx:key="ID">
-      <image class="product-img" src="{{item.ImageURL ? 'http://127.0.0.1:8080' + item.ImageURL : 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lxia07jQodd2SJFCYEpdX0Ck9I51eFCKg4icVनियम/0'}}" mode="aspectFill"></image>
+      <image wx:if="{{item.ImageURL}}" class="product-img" src="{{'http://127.0.0.1:8080' + item.ImageURL}}" mode="aspectFill"></image>
+      <view wx:else class="product-img-placeholder"></view>
       <view class="product-info">
         <text class="product-title">{{item.Title}}</text>
         <view class="product-meta">

@@ -1,156 +1,238 @@
-/** index.wxss **/
-.container { 
-  background-color: #f7f7f7; 
-  min-height: 100vh; 
+/** index.wxss - 活力橙黄风 **/
+page {
+  --primary: #FFB800;
+  --primary-dark: #FF9500;
+  --primary-light: #FFD666;
+  --accent: #FF6B35;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --text-tertiary: #999999;
+  --bg-page: #FFF8ED;
+  --bg-card: #FFFFFF;
+  --shadow-sm: 0 2rpx 8rpx rgba(255, 184, 0, 0.1);
+  --shadow-md: 0 8rpx 24rpx rgba(255, 184, 0, 0.15);
+  --shadow-lg: 0 16rpx 48rpx rgba(255, 184, 0, 0.2);
+  --radius-sm: 12rpx;
+  --radius-md: 20rpx;
+  --radius-lg: 32rpx;
 }
 
-/* 1. 全宽沉浸式顶部：黄色背景占满宽度并置顶 */
+.container {
+  background-color: var(--bg-page);
+  min-height: 100vh;
+}
+
+/* 1. 顶部搜索区 - 活力橙黄渐变 */
 .nav-header {
-  background-color: #FFD900;
-  width: 100%;             
-  box-sizing: border-box;  
-  padding: 80rpx 30rpx 50rpx 30rpx; 
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 90rpx 30rpx 40rpx 30rpx;
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-/* 2. 搜索框：白色圆角矩形 */
+/* 品牌标识 */
+.nav-header::before {
+  content: '量大淘淘';
+  display: block;
+  font-size: 40rpx;
+  font-weight: 900;
+  color: #fff;
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  margin-bottom: 24rpx;
+  letter-spacing: 4rpx;
+}
+
+/* 搜索框 - 白色圆角卡片 */
 .search-box {
   background: #ffffff;
-  border-radius: 40rpx;
-  height: 76rpx;
+  border-radius: var(--radius-lg);
+  height: 80rpx;
   display: flex;
   align-items: center;
-  padding: 0 30rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  padding: 0 28rpx;
+  box-shadow: var(--shadow-md);
 }
 
 .search-box icon {
-  margin-right: 15rpx;
+  margin-right: 16rpx;
 }
 
 .search-box text {
-  font-size: 26rpx;
-  color: #999;
+  font-size: 28rpx;
+  color: var(--text-tertiary);
 }
 
-/* 3. 分类导航：白色圆角卡片向上错层 */
+/* 2. 分类导航 - 悬浮卡片效果 */
 .category-nav {
   white-space: nowrap;
-  background: #ffffff;
-  padding: 24rpx 0;
-  border-top-left-radius: 36rpx;  
-  border-top-right-radius: 36rpx;
-  margin-top: -30rpx;             
+  background: var(--bg-card);
+  padding: 28rpx 20rpx;
+  margin-top: -24rpx;
   position: relative;
   z-index: 101;
-  border-bottom: 1rpx solid #f2f2f2;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .nav-item {
   display: inline-block;
-  padding: 0 32rpx;
+  padding: 0 28rpx;
   font-size: 28rpx;
-  color: #666;
+  color: var(--text-secondary);
   position: relative;
-  height: 60rpx;
-  line-height: 60rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  transition: all 0.3s ease;
 }
 
-/* 4. 选中状态小横条 */
+/* 选中状态 - 橙色渐变底部条 */
 .nav-item.active {
-  color: #000;
-  font-weight: bold;
+  color: var(--primary-dark);
+  font-weight: 700;
   font-size: 30rpx;
 }
 
-.nav-item.active:after {
+.nav-item.active::after {
   content: '';
   position: absolute;
-  bottom: 0rpx;
+  bottom: 4rpx;
   left: 50%;
   transform: translateX(-50%);
-  width: 36rpx;
-  height: 8rpx;
-  background: #FFD900;
-  border-radius: 4rpx;
+  width: 40rpx;
+  height: 10rpx;
+  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border-radius: 5rpx;
 }
 
-/* 5. 商品卡片与图片处理 */
-.product-list { 
-  padding: 20rpx; 
-  display: flex; 
-  flex-wrap: wrap; 
-  justify-content: space-between; 
+/* 3. 商品列表 - 双列瀑布流 */
+.product-list {
+  padding: 24rpx;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 }
 
-.product-card { 
-  width: 345rpx; 
-  background: #fff; 
-  border-radius: 20rpx; 
-  margin-bottom: 20rpx; 
-  overflow: hidden; 
-  box-shadow: 0 4rpx 16rpx rgba(0,0,0,0.06); 
+.product-card {
+  width: calc(50% - 12rpx);
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  margin-bottom: 24rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  position: relative;
 }
 
-/* 图片容器：固定高度，裁剪多余部分 */
+.product-card:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-md);
+}
+
+/* 商品图片容器 */
 .product-image-wrap {
   width: 100%;
-  height: 345rpx; /* 1:1 比例 */
-  background: #f5f5f5;
+  height: 300rpx;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
   position: relative;
   overflow: hidden;
 }
 
-/* 真实图片样式 */
+/* 图片样式 */
 .product-img {
   width: 100%;
   height: 100%;
   display: block;
 }
 
-/* 兜底占位样式 */
-.product-image-placeholder { 
-  width: 100%; 
-  height: 100%; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  color: #ccc; 
-  font-size: 24rpx; 
+/* 交易中角标 */
+.status-tag {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  font-size: 22rpx;
+  background: linear-gradient(135deg, var(--accent) 0%, #FF8C5A 100%);
+  color: #fff;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  font-weight: 600;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 53, 0.4);
 }
 
-/* 6. 商品文字信息 */
-.product-info { padding: 20rpx; }
-
-.product-title { 
-  font-size: 28rpx; 
-  color: #333; 
-  height: 80rpx; 
-  display: -webkit-box; 
-  -webkit-box-orient: vertical; 
-  -webkit-line-clamp: 2; 
-  overflow: hidden; 
-  line-height: 40rpx;
+/* 商品信息 */
+.product-info {
+  padding: 20rpx;
 }
 
-.product-price-row { 
-  margin-top: 12rpx; 
-  display: flex; 
-  align-items: baseline; 
+.product-title {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  height: 72rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 36rpx;
+  font-weight: 500;
 }
 
-.price-symbol { color: #ff4400; font-size: 24rpx; font-weight: bold; }
-.price-value { color: #ff4400; font-size: 38rpx; font-weight: bold; margin-left: 2rpx; }
-
-.status-tag { 
-  font-size: 20rpx; 
-  background: #fff1f0; 
-  color: #ff4d4f; 
-  padding: 2rpx 10rpx; 
-  border-radius: 6rpx; 
-  margin-left: 10rpx; 
+.product-price-row {
+  margin-top: 16rpx;
+  display: flex;
+  align-items: baseline;
 }
 
-.loading-tips { text-align: center; font-size: 24rpx; color: #999; padding: 40rpx; width: 100%; }
+.price-symbol {
+  color: var(--accent);
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.price-value {
+  color: var(--accent);
+  font-size: 40rpx;
+  font-weight: 800;
+  margin-left: 4rpx;
+  letter-spacing: -1rpx;
+}
+
+/* 加载提示 */
+.loading-tips {
+  text-align: center;
+  font-size: 26rpx;
+  color: var(--text-tertiary);
+  padding: 40rpx;
+  width: 100%;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.empty-state text {
+  font-size: 28rpx;
+  color: var(--text-tertiary);
+}
+
+/* 商品图片占位图 - CSS实现 */
+.product-img-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-img-placeholder::before {
+  content: '📷';
+  font-size: 64rpx;
+  opacity: 0.4;
+}

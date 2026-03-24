@@ -22,11 +22,11 @@
   <view class="bottom-bar">
     <view class="bar-left">
       <view class="action-item">
-        <icon type="info" size="20"></icon>
+        <text class="action-icon">💬</text>
         <text>留言</text>
       </view>
       <view class="action-item">
-        <icon type="success" size="20"></icon>
+        <text class="action-icon">⭐</text>
         <text>收藏</text>
       </view>
     </view>
