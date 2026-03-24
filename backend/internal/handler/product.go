@@ -65,7 +65,13 @@ func (h *ProductHandler) Create(c *gin.Context) {
 		return
 	}
 
-	p.UserID = 1 // 还未实现登录，先初始化 UserID
+	// 从 JWT token 中获取用户 ID
+	userID, exists := c.Get("user_id")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+		return
+	}
+	p.UserID = userID.(uint64)
 	p.Status = 1 // 初始状态为待售
 
 	if err := h.repo.Create(&p); err != nil {

@@ -3,6 +3,7 @@ package main
 import (
 	"liangda-taotao/config"
 	"liangda-taotao/internal/handler"
+	"liangda-taotao/internal/middleware"
 	"liangda-taotao/internal/model"
 	"liangda-taotao/internal/repository"
 	"log"
@@ -53,11 +54,12 @@ func main() {
 	// 2. 初始化 Repository 层
 	categoryRepo := repository.NewCategoryRepository(db)
 	productRepo := repository.NewProductRepository(db)
-	// userRepo := repository.NewUserRepository(db)
+	userRepo := repository.NewUserRepository(db)
 
 	// 3. 初始化 Handler 层
 	categoryHandler := handler.NewCategoryHandler(categoryRepo)
 	productHandler := handler.NewProductHandler(productRepo)
+	userHandler := handler.NewUserHandler(userRepo)
 
 	// 4. 启动 Gin 路由
 	r := gin.Default()
@@ -67,18 +69,31 @@ func main() {
 	//设置路由组
 	v1 := r.Group("/api/v1")
 	{
+		// 公开接口
+		// 微信登录
+		v1.POST("/login", userHandler.WeChatLogin)
 		// 获取全部分类
 		v1.GET("/categories", categoryHandler.GetAll)
 		// 获取商品列表
 		v1.GET("/products", productHandler.GetList)
-		// 发布商品
-		v1.POST("/products", productHandler.Create)
-		// 删除商品
-		v1.DELETE("/products/:id", productHandler.Delete)
 		// 查看商品详情
 		v1.GET("/products/:id", productHandler.GetDetail)
 		// 上传商品图片
 		v1.POST("/upload", productHandler.Upload)
+
+		// 需要登录的接口
+		auth := v1.Group("")
+		auth.Use(middleware.AuthMiddleware())
+		{
+			// 获取当前用户信息
+			auth.GET("/user", userHandler.GetUserInfo)
+			// 更新用户信息
+			auth.PUT("/user", userHandler.UpdateUserInfo)
+			// 发布商品（需要登录）
+			auth.POST("/products", productHandler.Create)
+			// 删除商品（需要登录）
+			auth.DELETE("/products/:id", productHandler.Delete)
+		}
 	}
 
 	// 5. 启动并在 8080 端口监听

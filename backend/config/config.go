@@ -25,3 +25,14 @@ var ApppDBconfig = DBConfig{
 	Port:     3306,
 	DBName:   "liang_da_tao_tao",
 }
+
+// WeChatConfig 微信小程序配置
+type WeChatConfig struct {
+	AppID     string
+	AppSecret string
+}
+
+var WeChat = WeChatConfig{
+	AppID:     "wx6015d4f584306826",
+	AppSecret: "YOUR_APP_SECRET", // TODO: 替换为实际的 AppSecret
+}

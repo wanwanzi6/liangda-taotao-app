@@ -1,5 +1,6 @@
 // pages/post/post.js
 const app = getApp();
+const auth = require('../../utils/auth.js')
 
 Page({
   data: {
@@ -11,10 +12,38 @@ Page({
     tempImageUrl: '',  // 本地预览路径
     remoteImageUrl: '', // 服务器返回的相对路径
     isUploading: false,
+    isLoggedIn: false,
   },
 
   onLoad() {
-    this.fetchCategories();
+    this.checkLogin();
+  },
+
+  // 检查登录状态
+  checkLogin() {
+    if (!auth.isLoggedIn()) {
+      // 未登录，引导用户登录
+      wx.showModal({
+        title: '提示',
+        content: '请先登录后再发布商品',
+        confirmText: '去登录',
+        success: (res) => {
+          if (res.confirm) {
+            app.login((success) => {
+              if (success) {
+                this.setData({ isLoggedIn: true });
+                this.fetchCategories();
+              }
+            });
+          } else {
+            wx.switchTab({ url: '/pages/index/index' });
+          }
+        }
+      });
+    } else {
+      this.setData({ isLoggedIn: true });
+      this.fetchCategories();
+    }
   },
 
   // 1. 选择图片
@@ -87,8 +116,13 @@ Page({
 
   // 5. 提交发布
   submitPost() {
-    const { title, description, price, selectedCategory, remoteImageUrl, isUploading } = this.data;
-    
+    const { title, description, price, selectedCategory, remoteImageUrl, isUploading, isLoggedIn } = this.data;
+
+    if (!isLoggedIn) {
+      wx.showToast({ title: '请先登录', icon: 'none' });
+      return;
+    }
+
     if (isUploading) {
       wx.showToast({ title: '图片还在上传中...', icon: 'none' });
       return;
@@ -99,7 +133,8 @@ Page({
       return;
     }
 
-    wx.request({
+    // 使用带 token 的请求
+    app.requestWithAuth({
       url: `${app.globalData.baseUrl}/products`,
       method: 'POST',
       data: {
@@ -107,16 +142,15 @@ Page({
         Description: description,
         Price: parseFloat(price),
         CategoryID: selectedCategory.ID,
-        ImageURL: remoteImageUrl, // 关键：把上传成功的图片路径传给后端
-        UserID: 1, // 暂时硬编码，后期做登录
+        ImageURL: remoteImageUrl,
         Status: 1
       },
       success: (res) => {
         // 兼容不同的后端返回 code 逻辑
         if (res.statusCode === 200 || (res.data && res.data.code === 200)) {
           wx.showToast({ title: '发布成功', icon: 'success' });
-          setTimeout(() => { 
-            wx.switchTab({ url: '/pages/index/index' }); 
+          setTimeout(() => {
+            wx.switchTab({ url: '/pages/index/index' });
           }, 1500);
         } else {
           wx.showToast({ title: '发布失败: ' + (res.data.error || ''), icon: 'none' });
