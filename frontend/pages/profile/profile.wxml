@@ -14,6 +14,28 @@
     <view class="edit-btn" bindtap="goToEdit">编辑资料</view>
   </view>
 
+  <!-- 功能卡片区域 -->
+  <view class="card function-card">
+    <view class="function-grid">
+      <view class="function-item">
+        <view class="function-icon">📦</view>
+        <text class="function-text">我的订单</text>
+      </view>
+      <view class="function-item">
+        <view class="function-icon">❤️</view>
+        <text class="function-text">我的收藏</text>
+      </view>
+      <view class="function-item">
+        <view class="function-icon">👀</view>
+        <text class="function-text">浏览历史</text>
+      </view>
+      <view class="function-item">
+        <view class="function-icon">🎓</view>
+        <text class="function-text">校内认证</text>
+      </view>
+    </view>
+  </view>
+
   <!-- 我的发布列表 -->
   <view class="section-title">我的发布</view>
 
@@ -38,5 +60,37 @@
   <view class="empty-state" wx:else>
     <text>还没有发布过商品</text>
     <button class="go-post-btn" bindtap="goToPost">去发布</button>
+  </view>
+
+  <!-- 更多功能列表 -->
+  <view class="section-title">更多服务</view>
+
+  <view class="card menu-card">
+    <view class="menu-item">
+      <view class="menu-left">
+        <text class="menu-icon">💬</text>
+        <text class="menu-text">联系客服</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <view class="menu-left">
+        <text class="menu-icon">ℹ️</text>
+        <text class="menu-text">关于我们</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+    <view class="menu-item">
+      <view class="menu-left">
+        <text class="menu-icon">⚙️</text>
+        <text class="menu-text">设置</text>
+      </view>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 底部安全提示 -->
+  <view class="footer">
+    <text class="footer-text">量大淘淘 · 校友专属二手平台</text>
   </view>
 </view>
