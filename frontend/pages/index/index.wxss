@@ -1,4 +1,4 @@
-/** index.wxss - 活力橙黄风 **/
+/** index.wxss - 极致紧凑+切换不抖动 **/
 page {
   --primary: #FFB800;
   --primary-dark: #FF9500;
@@ -9,10 +9,8 @@ page {
   --text-tertiary: #999999;
   --bg-page: #FFF8ED;
   --bg-card: #FFFFFF;
-  --shadow-sm: 0 2rpx 8rpx rgba(255, 184, 0, 0.1);
+  --shadow-sm: 0 4rpx 12rpx rgba(255, 184, 0, 0.1);
   --shadow-md: 0 8rpx 24rpx rgba(255, 184, 0, 0.15);
-  --shadow-lg: 0 16rpx 48rpx rgba(255, 184, 0, 0.2);
-  --radius-sm: 12rpx;
   --radius-md: 20rpx;
   --radius-lg: 32rpx;
 }
@@ -20,32 +18,33 @@ page {
 .container {
   background-color: var(--bg-page);
   min-height: 100vh;
+  /* 必须确保允许向上溢出，否则切换瞬间负位移会失效 */
+  overflow: visible !important; 
+  padding-top: 0;
 }
 
-/* 1. 顶部搜索区 - 活力橙黄渐变 */
+/* 1. 顶部搜索区 - 保持不动 */
 .nav-header {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
   width: 100%;
   box-sizing: border-box;
-  padding: 90rpx 30rpx 40rpx 30rpx;
+  padding: calc(env(safe-area-inset-top) + 90rpx) 30rpx 30rpx 30rpx;
   position: sticky;
   top: 0;
   z-index: 100;
 }
 
-/* 品牌标识 */
 .nav-header::before {
   content: '量大淘淘';
   display: block;
   font-size: 40rpx;
   font-weight: 900;
   color: #fff;
-  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
-  margin-bottom: 24rpx;
+  padding-top: 10rpx;
+  margin-bottom: 24rpx; 
   letter-spacing: 4rpx;
 }
 
-/* 搜索框 - 白色圆角卡片 */
 .search-box {
   background: #ffffff;
   border-radius: var(--radius-lg);
@@ -56,183 +55,102 @@ page {
   box-shadow: var(--shadow-md);
 }
 
-.search-box icon {
-  margin-right: 16rpx;
-}
-
-.search-box text {
-  font-size: 28rpx;
-  color: var(--text-tertiary);
-}
-
-/* 2. 分类导航 - 悬浮卡片效果 */
+/* 2. 分类导航 - 锁定位置 */
 .category-nav {
   white-space: nowrap;
   background: var(--bg-card);
-  padding: 28rpx 20rpx;
-  margin-top: -24rpx;
+  padding: 0;
+  width: 100%;
   position: relative;
+  /* 沿用你调好的参数 */
+  top: -60rpx; 
   z-index: 101;
-  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
-  box-shadow: var(--shadow-sm);
+  border-bottom: 1rpx solid rgba(0,0,0,0.05);
+  border-radius: 40rpx 40rpx 0 0;
 }
 
 .nav-item {
   display: inline-block;
-  padding: 0 28rpx;
+  padding: 0 32rpx;
+  height: 90rpx; 
+  line-height: 90rpx;
   font-size: 28rpx;
-  color: var(--text-secondary);
-  position: relative;
-  height: 64rpx;
-  line-height: 64rpx;
-  transition: all 0.3s ease;
 }
 
-/* 选中状态 - 橙色渐变底部条 */
 .nav-item.active {
   color: var(--primary-dark);
   font-weight: 700;
-  font-size: 30rpx;
+  position: relative;
 }
 
 .nav-item.active::after {
   content: '';
   position: absolute;
-  bottom: 4rpx;
+  bottom: 8rpx;
   left: 50%;
   transform: translateX(-50%);
   width: 40rpx;
-  height: 10rpx;
-  background: linear-gradient(90deg, var(--primary) 0%, var(--primary-dark) 100%);
-  border-radius: 5rpx;
+  height: 6rpx;
+  background: var(--primary-dark);
+  border-radius: 3rpx;
 }
 
-/* 3. 商品列表 - 双列瀑布流 */
-.product-list {
-  padding: 24rpx;
-  display: flex;
-  flex-wrap: wrap;
+/* 3. 瀑布流容器 - 核心：强制执行你的调优参数 */
+.waterfall-container {
+  display: flex !important;
+  box-sizing: border-box;
+  /* 强制保持贴边 */
+  padding: 0 6rpx !important; 
+  
+  position: relative;
+  /* 沿用你调好的参数 */
+  top: -110rpx; 
+  
   justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  
+  /* 关键：增加最小高度，防止切换瞬间容器高度归零导致位移锚点丢失 */
+  min-height: 800rpx; 
+}
+
+.column-left, .column-right {
+  /* 强制锁定宽度，不受内容影响 */
+  width: 49.5% !important; 
+  display: flex;
+  flex-direction: column;
 }
 
 .product-card {
-  width: calc(50% - 12rpx);
+  width: 100%;
   background: var(--bg-card);
   border-radius: var(--radius-md);
-  margin-bottom: 24rpx;
+  margin-bottom: 12rpx;
   overflow: hidden;
   box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
-  position: relative;
 }
 
-.product-card:active {
-  transform: scale(0.98);
-  box-shadow: var(--shadow-md);
-}
-
-/* 商品图片容器 */
-.product-image-wrap {
-  width: 100%;
-  height: 300rpx;
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-/* 图片样式 */
 .product-img {
   width: 100%;
-  height: 100%;
   display: block;
 }
 
-/* 交易中角标 */
-.status-tag {
-  position: absolute;
-  top: 16rpx;
-  right: 16rpx;
-  font-size: 22rpx;
-  background: linear-gradient(135deg, var(--accent) 0%, #FF8C5A 100%);
-  color: #fff;
-  padding: 6rpx 16rpx;
-  border-radius: 20rpx;
-  font-weight: 600;
-  box-shadow: 0 4rpx 12rpx rgba(255, 107, 53, 0.4);
-}
-
-/* 商品信息 */
 .product-info {
-  padding: 20rpx;
-}
-
-.product-title {
-  font-size: 28rpx;
-  color: var(--text-primary);
-  height: 72rpx;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-  line-height: 36rpx;
-  font-weight: 500;
-}
-
-.product-price-row {
-  margin-top: 16rpx;
-  display: flex;
-  align-items: baseline;
-}
-
-.price-symbol {
-  color: var(--accent);
-  font-size: 26rpx;
-  font-weight: 700;
+  padding: 16rpx;
 }
 
 .price-value {
   color: var(--accent);
   font-size: 40rpx;
   font-weight: 800;
-  margin-left: 4rpx;
-  letter-spacing: -1rpx;
 }
 
-/* 加载提示 */
+/* 加载提示也要跟着位移 */
 .loading-tips {
   text-align: center;
-  font-size: 26rpx;
+  font-size: 24rpx;
   color: var(--text-tertiary);
-  padding: 40rpx;
-  width: 100%;
-}
-
-/* 空状态 */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 120rpx 0;
-}
-
-.empty-state text {
-  font-size: 28rpx;
-  color: var(--text-tertiary);
-}
-
-/* 商品图片占位图 - CSS实现 */
-.product-img-placeholder {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.product-img-placeholder::before {
-  content: '📷';
-  font-size: 64rpx;
-  opacity: 0.4;
+  padding: 30rpx;
+  position: relative;
+  top: -410rpx;
 }

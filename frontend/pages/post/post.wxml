@@ -1,37 +1,38 @@
-<!--pages/post.wxml-->
+<!--pages/post/post.wxml-->
 <view class="container">
-  <view class="image-uploader" bindtap="chooseImage">
-    <image wx:if="{{tempImageUrl}}" src="{{tempImageUrl}}" mode="aspectFill" class="preview-image"></image>
-    
-    <view wx:else class="upload-placeholder">
-      <view class="plus-icon">+</view>
-      <text>添加宝贝图片</text>
-    </view>
-    
-    <view class="uploading-mask" wx:if="{{isUploading}}">
-      <text>正在上传...</text>
+  <!-- 融合式大卡片：图片 + 描述 -->
+  <view class="main-card">
+    <view class="main-content">
+      <!-- 左侧图片区域 -->
+      <view class="image-section" bindtap="chooseImage">
+        <image wx:if="{{tempImageUrl}}" src="{{tempImageUrl}}" mode="aspectFill" class="preview-image"></image>
+        <view wx:else class="upload-placeholder">
+          <text class="plus-icon">📷</text>
+        </view>
+        <view class="uploading-mask" wx:if="{{isUploading}}">
+          <text>上传中...</text>
+        </view>
+      </view>
+
+      <!-- 右侧描述区域 -->
+      <view class="desc-section">
+        <textarea
+          class="input-desc"
+          placeholder="描述一下宝贝的品牌型号、货源来源、新旧程度...建议第一行写下宝贝名称。"
+          placeholder-class="ph-color"
+          bindinput="onInputDesc"
+        ></textarea>
+      </view>
     </view>
   </view>
 
-  <view class="form-group">
-    <input 
-      class="input-title" 
-      placeholder="商品标题（如：算法导论 九成新）" 
-      bindinput="onInputTitle" 
-    />
-    <textarea 
-      class="input-desc" 
-      placeholder="详细描述一下宝贝的来源、新旧程度、入手价格等..." 
-      bindinput="onInputDesc"
-    ></textarea>
-  </view>
-
+  <!-- 价格和分类 -->
   <view class="cell-group">
     <view class="cell">
       <text>价格</text>
-      <input type="digit" placeholder="0.00" bindinput="onInputPrice" />
+      <input type="digit" placeholder="0.00" placeholder-class="ph-color" bindinput="onInputPrice" />
     </view>
-    
+
     <picker bindchange="onCategoryChange" range="{{categories}}" range-key="Name">
       <view class="cell">
         <text>分类</text>
@@ -42,6 +43,7 @@
     </picker>
   </view>
 
+  <!-- 发布按钮 -->
   <button class="submit-btn" bindtap="submitPost" disabled="{{isUploading}}">
     {{isUploading ? '图片上传中...' : '立即发布'}}
   </button>

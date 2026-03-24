@@ -1,4 +1,3 @@
-<!--index.wxml-->
 <view class="container">
   
   <view class="nav-header">
@@ -26,33 +25,68 @@
     </view>
   </scroll-view>
 
-  <view class="product-list">
-    <view 
-      class="product-card" 
-      wx:for="{{products}}" 
-      wx:key="ID" 
-      bindtap="goToDetail" 
-      data-id="{{item.ID}}"
-    >
-      <view class="product-image-wrap">
-        <image
-          wx:if="{{item.ImageURL}}"
-          src="{{'http://127.0.0.1:8080' + item.ImageURL}}"
-          mode="aspectFill"
-          class="product-img"
-        ></image>
-        <view wx:else class="product-img-placeholder"></view>
-      </view>
-      
-      <view class="product-info">
-        <text class="product-title">{{item.Title}}</text>
-        <view class="product-price-row">
-          <text class="price-symbol">¥</text>
-          <text class="price-value">{{item.Price}}</text>
-          <text class="status-tag" wx:if="{{item.Status == 2}}">交易中</text>
+  <view class="waterfall-container">
+    
+    <view class="column-left">
+      <block wx:for="{{products}}" wx:key="ID">
+        <view 
+          class="product-card" 
+          wx:if="{{index % 2 == 0}}"
+          bindtap="goToDetail" 
+          data-id="{{item.ID}}"
+        >
+          <view class="product-image-wrap">
+            <image
+              wx:if="{{item.ImageURL}}"
+              src="{{'http://127.0.0.1:8080' + item.ImageURL}}"
+              mode="widthFix" 
+              class="product-img"
+            ></image>
+            <view wx:else class="product-img-placeholder"></view>
+          </view>
+          
+          <view class="product-info">
+            <text class="product-title">{{item.Title}}</text>
+            <view class="product-price-row">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{item.Price}}</text>
+              <text class="status-tag" wx:if="{{item.Status == 2}}">交易中</text>
+            </view>
+          </view>
         </view>
-      </view>
+      </block>
     </view>
+
+    <view class="column-right">
+      <block wx:for="{{products}}" wx:key="ID">
+        <view 
+          class="product-card" 
+          wx:if="{{index % 2 != 0}}"
+          bindtap="goToDetail" 
+          data-id="{{item.ID}}"
+        >
+          <view class="product-image-wrap">
+            <image
+              wx:if="{{item.ImageURL}}"
+              src="{{'http://127.0.0.1:8080' + item.ImageURL}}"
+              mode="widthFix" 
+              class="product-img"
+            ></image>
+            <view wx:else class="product-img-placeholder"></view>
+          </view>
+          
+          <view class="product-info">
+            <text class="product-title">{{item.Title}}</text>
+            <view class="product-price-row">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{item.Price}}</text>
+              <text class="status-tag" wx:if="{{item.Status == 2}}">交易中</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
   </view>
 
   <view class="loading-tips" wx:if="{{loading}}">正在加载校友的宝贝...</view>

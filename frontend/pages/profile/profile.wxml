@@ -1,96 +1,75 @@
-<!--pages/profile/profile.wxml-->
 <view class="container">
-  <!-- 用户信息头部 -->
-  <view class="user-header">
-    <view class="avatar-wrap">
-      <image wx:if="{{userInfo.avatar_url}}" class="avatar" src="{{userInfo.avatar_url}}" mode="aspectFill"></image>
-      <view wx:else class="avatar-placeholder">👤</view>
+  <view class="user-header-card">
+    <view class="user-header">
+      <view class="avatar-wrap">
+        <image wx:if="{{userInfo.avatar_url}}" class="avatar" src="{{userInfo.avatar_url}}" mode="aspectFill"></image>
+        <view wx:else class="avatar-placeholder">👤</view>
+      </view>
+      <view class="user-info">
+        <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
+        <text class="verify-status" wx:if="{{userInfo.is_verify}}">已认证</text>
+        <text class="verify-status unverify" wx:else>未认证</text>
+      </view>
+      <view class="edit-btn" bindtap="goToEdit">编辑资料</view>
     </view>
-    <view class="user-info">
-      <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
-      <text class="verify-status" wx:if="{{userInfo.is_verify}}">已认证</text>
-      <text class="verify-status unverify" wx:else>未认证</text>
-    </view>
-    <view class="edit-btn" bindtap="goToEdit">编辑资料</view>
   </view>
-
-  <!-- 功能卡片区域 -->
-  <view class="card function-card">
-    <view class="function-grid">
-      <view class="function-item">
+  <view class="function-card">
+    <view class="icon-nav-container">
+      <view class="function-item" bindtap="goToOrders">
         <view class="function-icon">📦</view>
         <text class="function-text">我的订单</text>
       </view>
-      <view class="function-item">
+      <view class="function-item" bindtap="goToFavs">
         <view class="function-icon">❤️</view>
         <text class="function-text">我的收藏</text>
       </view>
-      <view class="function-item">
+      <view class="function-item" bindtap="goToHistory">
         <view class="function-icon">👀</view>
         <text class="function-text">浏览历史</text>
       </view>
-      <view class="function-item">
+      <view class="function-item" bindtap="goToVerify">
         <view class="function-icon">🎓</view>
         <text class="function-text">校内认证</text>
       </view>
     </view>
   </view>
-
-  <!-- 我的发布列表 -->
-  <view class="section-title">我的发布</view>
-
-  <view class="product-list" wx:if="{{products.length > 0}}">
-    <view class="product-item" wx:for="{{products}}" wx:key="ID">
-      <image wx:if="{{item.ImageURL}}" class="product-img" src="{{'http://127.0.0.1:8080' + item.ImageURL}}" mode="aspectFill"></image>
-      <view wx:else class="product-img-placeholder"></view>
-      <view class="product-info">
-        <text class="product-title">{{item.Title}}</text>
-        <view class="product-meta">
-          <text class="price">¥{{item.Price}}</text>
-          <text class="status status-{{item.Status}}">{{item.Status == 1 ? '待售' : item.Status == 2 ? '交易中' : '已售'}}</text>
+  <view class="my-release-card">
+    <view class="section-title">我的发布</view>
+    <scroll-view scroll-y class="product-list" wx:if="{{products.length > 0}}">
+      <view class="product-item" wx:for="{{products}}" wx:key="ID">
+        <image wx:if="{{item.ImageURL}}" class="product-img" src="{{'http://127.0.0.1:8080' + item.ImageURL}}" mode="aspectFill"></image>
+        <view wx:else class="product-img-placeholder"></view>
+        <view class="product-info">
+          <text class="product-title">{{item.Title}}</text>
+          <view class="product-meta">
+            <text class="price">¥{{item.Price}}</text>
+            <text class="status status-{{item.Status}}">
+              {{item.Status == 1 ? '待售' : item.Status == 2 ? '交易中' : '已售'}}
+            </text>
+          </view>
+          <view class="product-actions">
+            <view class="action-btn refresh" bindtap="refreshProduct" data-id="{{item.ID}}">
+              擦亮
+            </view>
+            <view class="action-btn delete" bindtap="deleteProduct" data-id="{{item.ID}}">删除</view>
+          </view>
         </view>
-        <view class="product-actions">
-          <view class="action-btn refresh" bindtap="refreshProduct" data-id="{{item.ID}}">擦亮</view>
-          <view class="action-btn delete" bindtap="deleteProduct" data-id="{{item.ID}}">删除</view>
-        </view>
+      </view>
+    </scroll-view>
+    <view class="empty-state" wx:else>
+      <view class="empty-content">
+        <text>还没有发布过商品</text>
+        <button class="go-post-btn" bindtap="goToPost">去发布</button>
       </view>
     </view>
   </view>
-
-  <view class="empty-state" wx:else>
-    <text>还没有发布过商品</text>
-    <button class="go-post-btn" bindtap="goToPost">去发布</button>
-  </view>
-
-  <!-- 更多功能列表 -->
-  <view class="section-title">更多服务</view>
-
-  <view class="card menu-card">
-    <view class="menu-item">
+  <view class="menu-card">
+    <view class="menu-item" bindtap="contactService">
       <view class="menu-left">
         <text class="menu-icon">💬</text>
         <text class="menu-text">联系客服</text>
       </view>
       <text class="menu-arrow">›</text>
     </view>
-    <view class="menu-item">
-      <view class="menu-left">
-        <text class="menu-icon">ℹ️</text>
-        <text class="menu-text">关于我们</text>
-      </view>
-      <text class="menu-arrow">›</text>
-    </view>
-    <view class="menu-item">
-      <view class="menu-left">
-        <text class="menu-icon">⚙️</text>
-        <text class="menu-text">设置</text>
-      </view>
-      <text class="menu-arrow">›</text>
-    </view>
-  </view>
-
-  <!-- 底部安全提示 -->
-  <view class="footer">
-    <text class="footer-text">量大淘淘 · 校友专属二手平台</text>
   </view>
 </view>
